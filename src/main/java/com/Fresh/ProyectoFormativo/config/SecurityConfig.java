@@ -4,6 +4,9 @@ import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jose.util.Base64;
+
+import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorDescriptor.Key;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +16,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jose.jws.JwsAlgorithm;
+import org.springframework.security.oauth2.jose.jws.JwsAlgorithms;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -40,7 +45,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET).permitAll()
                                 .requestMatchers(HttpMethod.POST, "/login/especialista").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/login/paciente").permitAll()
-                                .anyRequest().authenticated())
+                                .anyRequest().permitAll())
                 .oauth2ResourceServer((oauth2) -> oauth2
                         .jwt(Customizer.withDefaults())
                 )
@@ -57,8 +62,10 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder(){
-        JWK secretKey = new OctetSequenceKey.Builder(this.jwtKey.getBytes(StandardCharsets.UTF_8)).build();
+        JWK secretKey = new OctetSequenceKey.Builder(new SecretKeySpec(this.jwtKey.getBytes(StandardCharsets.UTF_8), "HMACSHA256")).keyUse(KeyUse.SIGNATURE).keyID(jwtKey).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(secretKey));
         return new NimbusJwtEncoder(jwks);
     }
+
+    
 }

@@ -2,7 +2,6 @@ package com.Fresh.ProyectoFormativo.Entity;
 
 import jakarta.persistence.*;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import lombok.Data;
 

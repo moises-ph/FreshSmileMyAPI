@@ -18,7 +18,7 @@ public class PacienteServiceIMPL implements PacienteService {
 
     @Override
     public Paciente ConsultarPacientePorEmail(String email) {
-        return this.repo.findPacienteByCorreo(email);
+        return this.repo.getPacienteByCorreo(email);
     }
 
     @Override

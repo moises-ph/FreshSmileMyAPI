@@ -1,7 +1,6 @@
 package com.Fresh.ProyectoFormativo.Entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "codigo_administrador")
